@@ -1,9 +1,20 @@
 # Documentação Completa — TaskFlow | Dashboard Bancário
 
+![Angular](https://img.shields.io/badge/Angular-21.0-red)
+![PrimeNG](https://img.shields.io/badge/PrimeNG-21.0-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
+![Status](https://img.shields.io/badge/Status-Completo-success)
 > **Projeto:** Mini Banco Digital – Dashboard Financeiro  
 > **Framework:** Angular 21 | PrimeNG 21  
 > **Tipo:** SPA (Single Page Application) sem Angular Router  
 > **Última atualização:** Março 2026
+
+## Quick Start
+```bash
+cd taskflow && npm install && npm start
+# Acesse: http://localhost:4200
+```
+Veja [instruções completas](#1-como-executar-o-projeto) para mais detalhes.
 
 ---
 
