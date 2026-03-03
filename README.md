@@ -1,34 +1,76 @@
 # Documentação Completa — TaskFlow | Dashboard Bancário
 
+![Angular](https://img.shields.io/badge/Angular-21.0-red)
+![PrimeNG](https://img.shields.io/badge/PrimeNG-21.0-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
+![Status](https://img.shields.io/badge/Status-Completo-success)
 > **Projeto:** Mini Banco Digital – Dashboard Financeiro  
 > **Framework:** Angular 21 | PrimeNG 21  
 > **Tipo:** SPA (Single Page Application) sem Angular Router  
-> **Última atualização:** Fevereiro 2026
+> **Última atualização:** Março 2026
+
+## Quick Start
+```bash
+cd taskflow && npm install && npm start
+# Acesse: http://localhost:4200
+```
+Veja [instruções completas](#1-como-executar-o-projeto) para mais detalhes.
 
 ---
 
 ## Sumário
 
-1. [Visão Geral do Projeto](#1-visão-geral-do-projeto)
-2. [Arquitetura e Estrutura de Pastas](#2-arquitetura-e-estrutura-de-pastas)
-3. [API (json-server)](#3-api-json-server)
-4. [Componentes — Análise Detalhada](#4-componentes--análise-detalhada)
-5. [Serviços (Services)](#5-serviços-services)
-6. [Modelos (Models)](#6-modelos-models)
-7. [Validadores Customizados](#7-validadores-customizados)
-8. [Estado Compartilhado](#8-estado-compartilhado)
-9. [Formulários e Validações](#9-formulários-e-validações)
-10. [Consumo de API](#10-consumo-de-api)
-11. [Tema Dark/Light](#11-tema-darklight)
-12. [Pipes Customizados e Utils](#12-pipes-customizados-e-utils)
-13. [Responsividade](#13-responsividade)
-14. [Testes Unitários](#14-testes-unitários)
-15. [Configuração MCP Servers](#15-configuração-mcp-servers)
-16. [Como Executar o Projeto](#16-como-executar-o-projeto)
+1. [Como Executar o Projeto](#1-como-executar-o-projeto)
+2. [Visão Geral do Projeto](#2-visão-geral-do-projeto)
+3. [Arquitetura e Estrutura de Pastas](#3-arquitetura-e-estrutura-de-pastas)
+4. [API (json-server)](#4-api-json-server)
+5. [Componentes — Análise Detalhada](#5-componentes--análise-detalhada)
+6. [Serviços (Services)](#6-serviços-services)
+7. [Modelos (Models)](#7-modelos-models)
+8. [Validadores Customizados](#8-validadores-customizados)
+9. [Estado Compartilhado](#9-estado-compartilhado)
+10. [Formulários e Validações](#10-formulários-e-validações)
+11. [Consumo de API](#11-consumo-de-api)
+12. [Tema Dark/Light](#12-tema-darklight)
+13. [Pipes Customizados e Utils](#13-pipes-customizados-e-utils)
+14. [Responsividade](#14-responsividade)
+15. [Testes Unitários](#15-testes-unitários)
+16. [Configuração MCP Servers](#16-configuração-mcp-servers)
 
 ---
 
-## 1. Visão Geral do Projeto
+## 1. Como Executar o Projeto
+
+### 1.1 Pré-requisitos
+- Node.js 20+
+- npm 10+
+
+### 1.2 Instalação e execução simultânea (recomendado)
+**Inicia API (porta 3000) + Angular (porta 4200) simultaneamente:**
+```bash
+cd taskflow
+npm install
+npm start    
+```
+
+### 1.3 Execução separada
+
+- API:
+```bash
+cd api && npm run api
+```
+- Angular (em outro terminal):
+```bash
+cd taskflow && ng serve
+```
+
+### 1.4 Acesso
+- **Aplicação:** http://localhost:4200
+- **API:** http://localhost:3000
+
+---
+
+## 2. Visão Geral do Projeto
 
 O TaskFlow é uma SPA Angular 21 que simula um dashboard de banco digital. A navegação entre telas ocorre via renderização condicional (`@if`), **sem uso do Angular Router** para navegação de páginas.
 
@@ -53,21 +95,26 @@ O TaskFlow é uma SPA Angular 21 que simula um dashboard de banco digital. A nav
 |---|---|---|
 | Layout (Header + Sidebar + Main) | ✅ Implementado | Estrutura base completa |
 | Navegação condicional (SPA) | ✅ Implementado | Via `RouterService` com `BehaviorSubject` |
-| Dashboard — Saldo | ✅ Implementado | Exibe saldo e nome do titular |
+| Dashboard — Saldo | ✅ Implementado | Exibe saldo consolidado de todas as contas |
+| Dashboard — Gráficos visuais | ✅ Implementado | Doughnut (pizza) e Barras (evolução mensal) |
 | Listagem de transações | ✅ Implementado | `p-table` com paginação, edição inline e remoção |
 | Criação de transações | ✅ Implementado | Formulário reativo com validação completa |
 | Filtro de transações por período | ✅ Implementado | DatePicker com `selectionMode="range"` |
+| Filtro de transações por tipo | ✅ Implementado | MultiSelect para Receita/Despesa/Transferência |
+| Filtro de transações por descrição | ✅ Implementado | Busca textual case-insensitive |
 | Exportação PDF do extrato | ✅ Implementado | jsPDF + jspdf-autotable com cabeçalho e rodapé |
 | Simulador de empréstimo | ✅ Implementado | Cálculo Price no service + ConfirmDialog + crédito de saldo |
 | Cadastro de contas correntes | ✅ Implementado | CRUD completo com ToggleSwitch ativo/inativo |
+| Sistema de conta principal | ✅ Implementado | Campo `principal` em ContaCorrente |
+| Múltiplas contas ativas | ✅ Implementado | Saldo consolidado no Dashboard |
 | Transferência entre contas | ✅ Implementado | MessageService para conta inativa, sem débito |
 | Estado compartilhado | ✅ Implementado | `BehaviorSubject` no `TransacaoService` |
-| Dark/Light Mode | ✅ Implementado | Via `TemaService` + CSS variables |
+| Dark/Light Mode | ✅ Implementado | Via `TemaService` com Angular Signals + CSS variables |
 | Mensagens (Toast) | ✅ Implementado | `MessageService` em todas as ações |
 
 ---
 
-## 2. Arquitetura e Estrutura de Pastas
+## 3. Arquitetura e Estrutura de Pastas
 
 ```
 taskflow/src/app/
@@ -78,7 +125,7 @@ taskflow/src/app/
 ├── core/
 │   └── services/
 │       ├── router.service.ts         # Navegação interna (BehaviorSubject<Pages>)
-│       └── tema.service.ts           # Toggle dark/light mode
+│       └── tema.service.ts           # Toggle dark/light mode com Signals
 ├── header/
 │   └── header.component.*
 ├── sidebar/
@@ -89,12 +136,12 @@ taskflow/src/app/
 │       ├── dashboard/
 │       │   ├── dashboard.component.*
 │       │   ├── models/conta.model.ts
-│       │   └── services/dashboard.service.ts (delega ao TransacaoService)
+│       │   └── services/dashboard.service.ts (delega ao TransacaoService e ContaCorrenteService)
 │       ├── transactions/
 │       │   ├── transactions.component.*  (toggle formulário/lista)
 │       │   ├── components/
 │       │   │   ├── create-transaction/   (FormGroup reativo com validação completa)
-│       │   │   └── list-transactions/    (tabela + filtro período + exportar PDF)
+│       │   │   └── list-transactions/    (tabela + filtros múltiplos + exportar PDF)
 │       │   ├── models/transacao.model.ts  (RECEITA, DESPESA, TRANSFERENCIA)
 │       │   └── services/transacao.service.ts  (BehaviorSubject, saldo, transferência)
 │       ├── loan/
@@ -119,15 +166,15 @@ taskflow/src/app/
 
 ---
 
-## 3. API (json-server)
+## 4. API (json-server)
 
-### Configuração
+### 4.1 Configuração
 
 - **Porta:** 3000  
 - **Comando:** `npm run api` (executa `json-server --watch db.json --port 3000`)  
 - **Arquivo:** `api/db.json`
 
-### Endpoints Disponíveis
+### 4.2 Endpoints Disponíveis
 
 | Método | Endpoint | Descrição |
 |---|---|---|
@@ -140,11 +187,12 @@ taskflow/src/app/
 | GET | `/contas-correntes` | Lista contas correntes cadastradas |
 | POST | `/contas-correntes` | Cria nova conta corrente |
 | PUT | `/contas-correntes/:id` | Atualiza conta corrente |
+| PATCH | `/contas-correntes/:id` | Atualiza saldo de conta corrente |
 | DELETE | `/contas-correntes/:id` | Remove conta corrente |
 | GET | `/transferencias` | Lista transferências |
 | GET | `/emprestimos` | Lista empréstimos |
 
-### Estrutura de Dados (db.json)
+### 4.3 Estrutura de Dados (db.json)
 
 ```json
 {
@@ -155,8 +203,8 @@ taskflow/src/app/
     { "id": "3", "data": "...", "descricao": "Transferência para Conta X", "valor": -500, "tipo": "transferencia", "contaDestinoId": "2" }
   ],
   "contas-correntes": [
-    { "id": "1", "nome": "Conta Principal", "agencia": "0001", "numeroConta": "12345-6", "ativa": true },
-    { "id": "2", "nome": "Conta Poupança", "agencia": "0001", "numeroConta": "98765-4", "ativa": true }
+    { "id": "1", "nome": "Conta Principal", "agencia": "0001", "numeroConta": "12345-6", "saldo": 10000, "ativa": true, "principal": true },
+    { "id": "2", "nome": "Conta Poupança", "agencia": "0001", "numeroConta": "98765-4", "saldo": 5000, "ativa": true }
   ],
   "transferencias": [],
   "emprestimos": []
@@ -165,54 +213,72 @@ taskflow/src/app/
 
 ---
 
-## 4. Componentes — Análise Detalhada
+## 5. Componentes — Análise Detalhada
 
-### 4.1 AppComponent
+### 5.1 AppComponent
 - Container principal (Header + Sidebar + Main)
 - Inicializa tema via `TemaService.iniciarTema()`
 
-### 4.2 SidebarComponent
+### 5.2 SidebarComponent
 - Itens de menu obtidos via `obterItensMenu()` de `shared/utils/menu-items.utils.ts`
 - Páginas: **Painel Geral**, **Minhas Transações**, **Transferências**, **Empréstimos**, **Contas Correntes**
 - Indicação visual da página ativa via `ngClass`
 
-### 4.3 MainPanelComponent
+### 5.3 MainPanelComponent
 - Renderização condicional via `@if` / `@else if`
 - Importa e renderiza: `DashboardComponent`, `TransactionsComponent`, `LoanComponent`, `ContasComponent`, `TransferenciaComponent`
 
-### 4.4 DashboardComponent
-- Exibe saldo e nome do titular carregados via `DashboardService` → `TransacaoService`
-- Saldo atualizado reativamente via `conta$ | async`
+### 5.4 DashboardComponent
+- **Saldo consolidado**: Soma automática de todas as contas correntes ativas
+- **Cards de resumo financeiro**: 
+  - Saldo total de todas as contas
+  - Total de receitas do período
+  - Total de despesas do período
+  - Total de transferências
+- **Cards individuais por conta**: Exibe cada conta corrente ativa com seu saldo específico
+- **Gráficos visuais avançados** (PrimeNG ChartModule):
+  - **Gráfico Doughnut (Pizza)**: Distribuição visual de receitas vs despesas vs transferências
+  - **Gráfico de Barras**: Evolução mensal de receitas e despesas (últimos 6 meses)
+  - Cores dinâmicas adaptadas ao tema dark/light
+- **Últimas 5 transações**: Tabela com as transações mais recentes
+- **Indicadores visuais**: Cores para valores positivos (verde) e negativos (vermelho)
+- Saldo atualizado reativamente via `conta$ | async` e `contas$ | async`
 
-### 4.5 TransactionsComponent
+### 5.5 TransactionsComponent
 - Toggle entre `CreateTransactionComponent` (formulário) e `ListTransactionsComponent` (tabela)
 
-### 4.6 CreateTransactionComponent
+### 5.6 CreateTransactionComponent
 - Formulário reativo com 5 validadores (nativo + customizados)
 - Campos: data, descrição (3-100 chars), valor (0,01–999.999,99), tipo
 - Feedback inline com `<small>` após envio (`submetido = true` ativa `markAllAsTouched`)
 - Usa `form.hasError()` para mensagens específicas por tipo de erro
 
-### 4.7 ListTransactionsComponent
+### 5.7 ListTransactionsComponent
 - Tabela paginada com edição inline por linha
-- **Filtro por período** via `p-datepicker` com `selectionMode="range"`
-- **Exportar PDF** via `exportarTransacoesParaPdf()` (respeita filtro ativo)
+- **Sistema de filtros múltiplos**:
+  - **Filtro por período**: DatePicker com `selectionMode="range"` para selecionar intervalo de datas
+  - **Filtro por tipo**: MultiSelect para filtrar por Receita, Despesa ou Transferência
+  - **Filtro por descrição**: Campo de busca textual (case-insensitive) que filtra na descrição das transações
+  - **Botão "Limpar Filtros"**: Remove todos os filtros aplicados de uma vez
+- **Filtros combinados**: Todos os filtros podem ser aplicados simultaneamente
+- **Exportar PDF** via `exportarTransacoesParaPdf()` (respeita todos os filtros ativos)
 - Tag de tipo inclui **Entrada**, **Saída** e **Transferência** (com severidade `info`)
+- **Edição inline com validação**: Valida data, descrição (min 3 chars) e valor (> 0) antes de salvar
 
-### 4.8 LoanComponent
+### 5.8 LoanComponent
 - Sliders para valor (R$1.000–R$50.000) e parcelas (1–48)
 - Cálculo delegado ao `EmprestimoService` (fórmula de amortização Price)
 - **`p-confirmDialog`** exibe resumo antes de contratar
 - Após confirmação: `TransacaoService.atualizarSaldo()` **credita o valor no saldo**
 - Estado `emprestimoConcluido` exibe banner de sucesso após contratação
 
-### 4.9 ContasComponent
+### 5.9 ContasComponent
 - CRUD completo de contas correntes (`ContaCorrenteService`)
 - Formulário com validação completa (nome 3-60 chars, agência, número da conta)
 - Cards com **`p-toggleswitch`** para ativar/desativar cada conta
 - Confirmação de remoção via `p-confirmDialog`
 
-### 4.10 TransferenciaComponent
+### 5.10 TransferenciaComponent
 - Selects de conta origem e destino (lista de `ContaCorrenteService`)
 - Conta destino inativa: exibe `p-message` de aviso e bloqueia o envio via `MessageService`
 - Chama `TransacaoService.realizarTransferencia()` que registra o lançamento como `TipoTransacao.TRANSFERENCIA`
@@ -220,24 +286,31 @@ taskflow/src/app/
 
 ---
 
-## 5. Serviços (Services)
+## 6. Serviços (Services)
 
-### RouterService (`core/services/`)
+### 6.1 RouterService (`core/services/`)
+
+Navegação SPA sem Router:
+
 ```typescript
-// Navegação SPA sem Router
 private currentPage$ = new BehaviorSubject<Pages>(Pages.DASHBOARD);
 setCurrentPage(pagina: Pages): void
 getCurrentPage(): Observable<Pages>
 ```
 
-### TemaService (`core/services/`)
+### 6.2 TemaService (`core/services/`)
+
+Gerenciamento de tema com Angular Signals:
+
 ```typescript
 toggleTema(): void          // alterna dark/light
 iniciarTema(): void         // detecta prefers-color-scheme
 ```
 
-### TransacaoService (`transactions/services/`)
+### 6.3 TransacaoService (`transactions/services/`)
+
 Estado centralizado principal da aplicação:
+
 ```typescript
 // Estado reativo
 transacoes$: Observable<Transacao[]>   // BehaviorSubject
@@ -253,42 +326,81 @@ removerTransacao(id): Observable<void>
 realizarTransferencia(origem, destino, descricao, valor): Observable<Transacao>
 ```
 
-### DashboardService (`dashboard/services/`)
-Thin wrapper que delega ao `TransacaoService`:
+### 6.4 DashboardService (`dashboard/services/`)
+
+Coordena dados de múltiplas fontes para o Dashboard:
+
 ```typescript
-obterConta(): Observable<Conta>
-get conta$(): Observable<Conta | null>
+// Observables expostos
+get conta$(): Observable<Conta | null>              // Conta principal (legado)
+get contas$(): Observable<ContaCorrente[]>          // Todas as contas correntes
+get contaAtiva$(): Observable<ContaCorrente | null> // Conta corrente ativa/principal
+get transacoes$(): Observable<Transacao[]>          // Todas as transações
+
+// Métodos de carregamento
+obterConta(): Observable<Conta>                     // Carrega conta principal
+obterContas(): Observable<ContaCorrente[]>          // Carrega contas correntes
+obterTransacoes(): Observable<Transacao[]>          // Carrega transações
+
+// Cálculo de resumo financeiro
+calcularResumo(transacoes: Transacao[]): {
+  receitas: number;
+  despesas: number;
+  transferencias: number;
+}
 ```
 
-### EmprestimoService (`loan/services/`)
+### 6.5 EmprestimoService (`loan/services/`)
+
 ```typescript
 calcularValorParcela(valor, parcelas, taxa): number  // Fórmula Price
 calcularTotalPagar(parcela, parcelas): number
 simular(...): SimulacaoEmprestimo                    // retorna objeto de resumo
 ```
 
-### ContaCorrenteService (`contas/services/`)
-```typescript
-contas$: Observable<ContaCorrente[]>    // BehaviorSubject
+### 6.6 ContaCorrenteService (`contas/services/`)
 
-obterContas(): Observable<ContaCorrente[]>
-criarConta(c): Observable<ContaCorrente>
-atualizarConta(c): Observable<ContaCorrente>
-removerConta(id): Observable<void>
-alternarAtivacao(c): Observable<ContaCorrente>   // toggle ativa/inativa
-obterContasAtivas(): ContaCorrente[]             // método síncrono
+Gerencia o estado e operações de contas correntes:
+
+```typescript
+// Observables de estado
+contas$: Observable<ContaCorrente[]>              // Lista reativa de todas as contas
+contaAtiva$: Observable<ContaCorrente | null>     // Conta principal/ativa atual
+
+// CRUD básico
+obterContas(): Observable<ContaCorrente[]>        // GET /contas-correntes
+criarConta(c): Observable<ContaCorrente>          // POST /contas-correntes
+atualizarConta(c): Observable<ContaCorrente>      // PUT /contas-correntes/:id
+removerConta(id): Observable<void>                // DELETE /contas-correntes/:id
+
+// Operações especiais
+alternarAtivacao(c): Observable<ContaCorrente>    // Toggle ativa/inativa
+atualizarSaldo(id, novoSaldo): Observable<ContaCorrente>  // PATCH /contas-correntes/:id
+
+// Métodos síncronos (snapshot do estado atual)
+obterContasAtivas(): ContaCorrente[]              // Filtra contas com ativa=true
+obterSaldoAtivo(): number                         // Retorna saldo da conta ativa
+obterContaAtiva(): ContaCorrente | null           // Retorna conta ativa/principal
 ```
+
+**Lógica de Conta Ativa:**
+- Prioriza conta com `principal: true` e `ativa: true`
+- Se não houver principal, usa a primeira conta ativa
+- Sincroniza automaticamente quando contas são atualizadas
+- Usado pelo Dashboard para exibir saldo principal
 
 ---
 
-## 6. Modelos (Models)
+## 7. Modelos (Models)
 
-### Conta (`dashboard/models/conta.model.ts`)
+### 7.1 Conta (`dashboard/models/conta.model.ts`)
+
 ```typescript
 interface Conta { id: number; nome: string; saldo: number; }
 ```
 
-### Transacao + TipoTransacao (`transactions/models/transacao.model.ts`)
+### 7.2 Transacao + TipoTransacao (`transactions/models/transacao.model.ts`)
+
 ```typescript
 enum TipoTransacao { RECEITA = 'receita', DESPESA = 'despesa', TRANSFERENCIA = 'transferencia' }
 
@@ -302,18 +414,28 @@ interface Transacao {
 }
 ```
 
-### ContaCorrente (`contas/models/conta-corrente.model.ts`)
+### 7.3 ContaCorrente (`contas/models/conta-corrente.model.ts`)
+
 ```typescript
 interface ContaCorrente {
   id?: number | string;
   nome: string;
   agencia: string;
   numeroConta: string;
-  ativa: boolean;
+  saldo: number;              // Saldo da conta corrente
+  ativa: boolean;             // Se a conta está ativa (pode receber transferências)
+  principal?: boolean;        // Indica a conta principal do usuário (exibida no dashboard)
 }
 ```
 
-### SimulacaoEmprestimo (`loan/services/emprestimo.service.ts`)
+**Notas:**
+- O campo `principal` identifica qual conta é exibida como conta principal no sistema
+- O `DashboardService` prioriza a conta marcada como `principal: true` e `ativa: true`
+- Se nenhuma conta for principal, usa a primeira conta ativa encontrada
+- O campo `saldo` é atualizado automaticamente pelo sistema ao realizar transações
+
+### 7.4 SimulacaoEmprestimo (`loan/services/emprestimo.service.ts`)
+
 ```typescript
 interface SimulacaoEmprestimo {
   valorSolicitado: number;
@@ -327,7 +449,7 @@ interface SimulacaoEmprestimo {
 
 ---
 
-## 7. Validadores Customizados
+## 8. Validadores Customizados
 
 Arquivo: `shared/validators/validadores.ts`
 
@@ -342,6 +464,7 @@ Cinco validadores reutilizáveis com fins didáticos — fáceis de entender e r
 | `naoApenasNumerosValidator()` | `apenasNumeros` | Texto não pode ser só dígitos |
 
 ### Uso no template com `form.hasError()`:
+
 ```html
 @if (campo('descricao').hasError('minlength')) {
   <small class="text-red-500">
@@ -352,9 +475,9 @@ Cinco validadores reutilizáveis com fins didáticos — fáceis de entender e r
 
 ---
 
-## 8. Estado Compartilhado
+## 9. Estado Compartilhado
 
-### Diagrama de Fluxo
+### 9.1 Diagrama de Fluxo
 
 ```
 DashboardComponent ──────────────────────────────┐
@@ -369,7 +492,7 @@ CreateTransactionComponent ─────────────────�
                                                          → atualizarSaldo() automático
 ```
 
-### `TransacaoService` como hub central:
+### 9.2 `TransacaoService` como hub central:
 - `transacoesSubject` (BehaviorSubject) — lista reativa de transações
 - `contaSubject` (BehaviorSubject) — conta com saldo reativo
 - Ao criar transação → atualiza lista **e** saldo automaticamente
@@ -378,9 +501,9 @@ CreateTransactionComponent ─────────────────�
 
 ---
 
-## 9. Formulários e Validações
+## 10. Formulários e Validações
 
-### Campos e Regras
+### 10.1 Campos e Regras
 
 | Componente | Campo | Validators | Erros exibidos |
 |---|---|---|---|
@@ -396,7 +519,7 @@ CreateTransactionComponent ─────────────────�
 | Transferencia | descricao | required, min(3), max(100), semEspacos | Mensagens específicas |
 | Transferencia | valor | required, min(0.01), valorPositivo, valorMaximo(100000) | Mensagens específicas |
 
-### Padrão de feedback de erros:
+### 10.2 Padrão de feedback de erros:
 1. **`submetido = true`** ao clicar em enviar — ativa `markAllAsTouched()`
 2. **`campoInvalido(nome)`** — helper que verifica `invalid && (dirty || touched || submetido)`
 3. Tags `<small class="text-red-500">` com ícone `pi pi-exclamation-circle`
@@ -405,7 +528,7 @@ CreateTransactionComponent ─────────────────�
 
 ---
 
-## 10. Consumo de API
+## 11. Consumo de API
 
 | Critério | Status | Observação |
 |---|---|---|
@@ -419,13 +542,44 @@ CreateTransactionComponent ─────────────────�
 
 ---
 
-## 11. Tema Dark/Light
+## 12. Tema Dark/Light
 
 - **Mecanismo:** Classe CSS `my-app-dark` no `<html>`
 - **Detecção automática:** `prefers-color-scheme: dark` via `TemaService.iniciarTema()`
 - **PrimeNG:** `darkModeSelector: '.my-app-dark'` no `providePrimeNG()`
 
-### Tokens CSS (`styles.css`)
+### 12.1 Implementação com Angular Signals
+
+O `TemaService` utiliza a **API de Signals do Angular** (moderna e mais performática):
+
+```typescript
+// core/services/tema.service.ts
+private readonly _isDarkMode = signal(false);      // Signal privado mutável
+readonly isDarkMode = this._isDarkMode.asReadonly(); // Signal público read-only
+
+toggleTema() {
+  this._isDarkMode.update((valor) => !valor);      // Atualiza o signal
+  const element = document.querySelector('html');
+  if (element) {
+    element.classList.toggle('my-app-dark', this._isDarkMode());
+  }
+}
+
+iniciarTema() {
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (prefersDark) {
+    this.toggleTema();  // Aplica dark mode automaticamente
+  }
+}
+```
+
+**Vantagens dos Signals sobre BehaviorSubject:**
+- ✅ Sintaxe mais simples e menos verbosa
+- ✅ Melhor performance (change detection mais eficiente)
+- ✅ Menos boilerplate (sem subscribe/unsubscribe)
+- ✅ Integração nativa com Angular (futuro da reatividade)
+
+### 12.2 Tokens CSS (`styles.css`)
 
 | Token | Light | Dark |
 |---|---|---|
@@ -438,9 +592,9 @@ CreateTransactionComponent ─────────────────�
 
 ---
 
-## 12. Pipes Customizados e Utils
+## 13. Pipes Customizados e Utils
 
-### Estrutura `shared/`
+### 13.1 Estrutura `shared/`
 
 ```
 shared/
@@ -454,20 +608,23 @@ shared/
     └── validadores.ts             (ValidatorFn customizados)
 ```
 
-### `formatacao.utils.ts` (funções puras)
+### 13.2 `formatacao.utils.ts` (funções puras)
+
 ```typescript
 corParaValorFinanceiro(valor: number): string    // CSS color string
 formatarMoedaBrl(valor: number): string          // "R$ 1.500,00"
 formatarDataBrl(dataIso: string): string         // "26/02/2026"
 ```
 
-### `menu-items.utils.ts`
+### 13.3 `menu-items.utils.ts`
+
 ```typescript
 interface ItemMenu { label: string; icon: string; pagina: Pages; }
 obterItensMenu(): ItemMenu[]    // retorna todos os 5 itens de menu
 ```
 
-### `pdf.utils.ts`
+### 13.4 `pdf.utils.ts`
+
 ```typescript
 interface ConfiguracaoRelatorio { titulo, subtitulo?, nomeArquivo, nomeTitular? }
 
@@ -478,18 +635,21 @@ exportarTransacoesParaPdf(
   periodoFim?: Date
 ): void   // gera e faz download do PDF
 ```
+
 **Estrutura do PDF:** Cabeçalho dark, informações do relatório (titular, data, período, total), tabela com colunas Data/Descrição/Tipo/Valor (valores coloridos), rodapé com paginação.
 
-### `NegativeValuesPipe`
+### 13.5 `NegativeValuesPipe`
+
 ```typescript
 // Delega para corParaValorFinanceiro() de formatacao.utils.ts
 transform(value: number): string   // retorna CSS color string para [style]
 ```
+
 Usada no template: `[style]="transaction.valor | negativeValues"`
 
 ---
 
-## 13. Responsividade
+## 14. Responsividade
 
 | Breakpoint | Implementação |
 |---|---|
@@ -499,7 +659,7 @@ Usada no template: `[style]="transaction.valor | negativeValues"`
 
 ---
 
-## 14. Testes Unitários
+## 15. Testes Unitários
 
 Estado atual: apenas boilerplate `should create` gerado pelo CLI.
 
@@ -513,9 +673,9 @@ Arquivos de spec presentes mas sem testes de lógica de negócio:
 
 ---
 
-## 15. Configuração MCP Servers
+## 16. Configuração MCP Servers
 
-### Arquivo: `taskflow/.vscode/mcp.json`
+### 16.1 Arquivo: `taskflow/.vscode/mcp.json`
 
 ```json
 {
@@ -532,7 +692,7 @@ Arquivos de spec presentes mas sem testes de lógica de negócio:
 }
 ```
 
-### Angular CLI MCP — Ferramentas
+### 16.2 Angular CLI MCP — Ferramentas
 
 | Ferramenta | Uso |
 |---|---|
@@ -541,41 +701,11 @@ Arquivos de spec presentes mas sem testes de lógica de negócio:
 | `search_documentation` | Busca na docs oficial |
 | `list_projects` | Lista projetos no workspace |
 
-### PrimeNG MCP — Documentação
+### 16.3 PrimeNG MCP — Documentação
 
 - `https://primeng.org/llms/llms.txt` — índice de componentes
 - `https://primeng.org/llms/components/{nome}.md` — doc de um componente
 
 ---
 
-## 16. Como Executar o Projeto
-
-### Pré-requisitos
-- Node.js 20+
-- npm 10+
-
-### Instalação e execução simultânea (recomendado)
-
-```bash
-cd taskflow
-npm install
-npm start     # inicia API (porta 3000) + Angular (porta 4200) simultaneamente
-```
-
-### Execução separada
-
-```bash
-# API
-cd api && npm run api
-
-# Angular (outro terminal)
-cd taskflow && ng serve
-```
-
-### Acesso
-- **Aplicação:** http://localhost:4200
-- **API:** http://localhost:3000
-
----
-
-*Documentação atualizada em 02/03/2026*
+*Documentação atualizada em 02/03/2026 — reflete implementações completas de validação de formulários, feature de empréstimo, cadastro de contas correntes com sistema de conta principal, transferência entre contas, exportação PDF com filtros múltiplos, gráficos visuais no Dashboard, e uso de Angular Signals no TemaService.*
